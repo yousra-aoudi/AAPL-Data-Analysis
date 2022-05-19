@@ -473,7 +473,7 @@ pyplot.ylabel('Mean Square Error')
 pyplot.savefig('AAPL - Comparing the performance of various algorithms on the Train and Test Dataset.png')
 pyplot.show()
 
-# Model Tuning and Grid Search
+# 6. Model Tuning and Grid Search
 param_grid = {'alpha': [0.01, 0.1, 0.3, 0.7, 1, 1.5, 3, 5]}
 model = Lasso()
 kfold_Lasso = KFold(n_splits=num_folds, random_state=None)
@@ -487,7 +487,7 @@ for mean, stdev, param in zip(means, stds, params):
     print("Lasso mean %f (Lasso stdev %f) with: Lasso param %r" % (mean, stdev, param))
 
 
-# Finalize the model
+# 7.1. Finalize the model
 
 # In the last step we will check the finalized model on the test set.
 
@@ -517,3 +517,21 @@ pyplot.legend()
 pyplot.rcParams["figure.figsize"] = (15,15)
 pyplot.savefig('AAPL - Lasso model - actual data versus predicted data.png')
 pyplot.show()
+
+# 7.2. Save Model for Later Use
+# Save Model Using Pickle
+from pickle import dump
+from pickle import load
+
+# save the model to disk
+filename = 'apple_finalized_model.sav'
+dump(model, open(filename, 'wb'))
+# some time later...
+# load the model from disk
+loaded_model = load(open(filename, 'rb'))
+# estimate accuracy on validation set
+#rescaledValidationX = scaler.transform(X_validation) #in case the data is scaled.
+#predictions = model.predict(rescaledValidationX)
+predictions = model.predict(X_test)
+result = mean_squared_error(Y_test, predictions)
+print(result)
